@@ -1,0 +1,87 @@
+---
+title: "Trabajo Final"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+date: "2023-05-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Para la realización del siguiente trabajo se ha usado, principalmente, el programa informático R y RStudio. R es un lenguaje de programación utilizado en estadística y análisis de datos, y con el cual de puede visualizar, manipular y analizar diferente tipo de datos y para desarrollar modelos estadísticos y gráficos. Este programa se puede utilizar datos muy básicos o para modelos muy avanzados, aunque en este caso utilizaremos datos más básicos. Para realizar las diferentes tareas de necesitaran paquetes y librerías, algunas de las cuales ya están integradas en el programa, mientras que otras las tendremos que descargar nosotros. El primer paso es, pues, descargarnos el programa en nuestro ordenador. RStudio por su parte, es una interfaz más amigable para poder trabajar de manera más cómoda en R, además de proporcionar diferentes herramientas. Es una IDE (entorno de desarrollo integrado) diseñado para programar lenguaje de programación en R. Entre algunas de las herramientas que nos proporcionar destacaremos aquellas que nos han sido útiles par este trabajo, como son:
+
+-	Editor de códigos. 
+-	Una consola interactiva para ejecutar comandos y ver los resultados. 
+-	Visualización de resultados, como gráficos o tablas. 
+-	Identificación y corrección de errores en los códigos. 
+-	Integración con Git. 
+
+Por otro lado, tambien hemos utilizado el programa Excell para la realización de la tabla donde de recogen los datos. Excell es una herramienta de hoja de cálculo que nos permite realizar cálculos, análisis de datos, etc. En nuestro caso, se ha utilizado para la construcción de una tabla donde se recogen las dos variables a analizae, tal y como se muestra a continuación:
+
+```{r}
+data.frame(Trabajo)
+```
+
+En esta tabla se recogen, por un lado, el número de fosas comunes documentadas en todos los pueblos de la provincia de Sevilla, los números de víctimas halladas (según las ultimas estimaciones de la pagina de la Junta de Andalucía, y la densidad del suelo de cada pueblo. Los números asociados a la densidad del suelo han sido codificados para su manejo en RStudio, quedando configurado de la siguiente manera:
+
+-	1: <1.2 g/cc
+-	2: 1.2-1.3 g/cc
+-	3: 1.3-1.4 g/cc
+-	4: 1.4-1.5 g/cc
+-	5: 1.5-1.7 g/cc
+*g/cc = gramo por centímetro cúbico. 
+
+Para la identificación de cada densidad con los pueblos de Sevilla, se ha usado dos mapas diferentes, uno de las propiedad físico químicas de los suelos de Andalucía de la pagina web del CSIC y otro de los pueblos de Sevilla. 
+
+Mediante la utilización de un programa de edición de fotos, se superpusieron ambas imágenes y se relacionaron ambos mapas. 
+Una vez obtenido los datos, la tabla mencionada anteriormente se importó a RStudio. Lo que se pretene con este trabajo es una regresión lineal con variables ordinales independientes. Las variables oridinales representan categorias que tienen un orden inherente pero no una distancia uniforme entre ellas.
+
+ Como se ha menncionado ya, primero se codificaron las densiades del suelo con valroes numericos del 1 al 5. Tras esto, creamos un data frame con los resultados obtenidos (en nuestro caso, eliminaremos la columan “Pueblos” ya que nos casuará problemas y no nos es necesaria ya):
+
+```{r}
+Trabajo <- data.frame (Trabajo_Galo_1_)
+Trabajo<-subset(Trabajo, select = -Pueblos)
+```
+
+Antes de ajustar un modelo linea, se debe hacer un analisis descriptivo de los datos, mediante el comando “Summary (X). Se busca determinar si la variable  “numero de fosas comunes” está relacionado con la variable “Densidad del suelo”. Para ello, vemos inicialmente está relacion graficamente, mediante el siguiente código: 
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(Trabajo$Numero.Fcoum, main = "Numero_Fosas_Comunes")
+boxplot(Trabajo$Densidad.Suelo, main = "Densidad_Suelo")
+
+```
+```{r}
+plot(Trabajo)
+
+```
+
+
+Para comprobar la relación lineal entre las variables, usamos el comando “cor(x)”. En nuestro caso, vemos que la relación entre el número de fosas comunes y la densidad del suelo es una relación lineal positiva débil (cor = 0.35424695). Para calcular el porcentaje de Y que puede ser explicada por X, se utiliza el cuadrado de coeficiente de correlación de Perason. Para ello, eleveamos al cuadrado el resultado obtenido anteriormente (0. 35424695^2 = 0.1254909). De este resultado se deduce que el 88% no se está relacionado. 
+```{r}
+cor(Trabajo$Numero.Fcoum, Trabajo$Densidad.Suelo)
+
+
+```
+```{r}
+0.354247^2
+
+```
+Dado que estas variables no parecen tener relación, pasaremos a comprobar la variable “Número de victimas” con “Densidad del suelo”
+```{r}
+-	cor(Trabajo$Numero.Vic, Trabajo$Densidad.Suelo)
+
+```
+En este caso la relación es aún menor (cor = 0.05490563), por lo que tampoco están relacionadas. 
+
+Por último, ajustamos el modelo con las variables “numero fosas” y “densidad del suelo” mediante el comando: 
+```{r}
+m1 <- lm(Trabajo$Numero.Fcoum~Trabajo$Densidad.Suelo)
+m1
+
+```
+Se estima, pues, que el nivel de número de fosas comunes tiene un valor de 1.2471 cuando la variable explicativa es 0. 
+
